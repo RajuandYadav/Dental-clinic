@@ -6,11 +6,12 @@ if (isset($_POST['submit'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $number = $_POST['number'];
     $date = $_POST['date'];
+    $desc = $_POST['description'];
 
 if (preg_match('/^\d{10}$/', $number)) {
     // Valid 10-digit number
-     $insert = mysqli_query($conn, "INSERT INTO `create_form` (name, email, number, date)
-    VALUES ('$name', '$email', '$number', '$date')") or die('query failed');
+     $insert = mysqli_query($conn, "INSERT INTO `create_form` (name, email, number, date, description)
+    VALUES ('$name', '$email', '$number', '$date', '$desc')") or die('query failed');
 
 if ($insert) {
     $message[] = 'appointment made successfully!';
@@ -45,15 +46,57 @@ else {
     <link rel="stylesheet" href="css/style.css">
 
 </head>
-
+<style>
+     .hidden {
+            display: none;
+        }
+</style>
 <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+        // Check if 'user' exists in localStorage
+        const user = localStorage.getItem('user');
+        
+        // Select the button element
+        const listButton = document.querySelector('#list-appointment');
+        const loginButton = document.querySelector('#login');
+        const logoutButton = document.querySelector('#logout');
+
+
+        // If 'user' exists, show the button; otherwise, hide it
+        if (user) {
+            listButton.classList.remove('hidden');
+            loginButton.classList.add('hidden');
+            logoutButton.classList.remove('hidden');
+        } else {
+            listButton.classList.add('hidden');
+            logoutButton.classList.add('hidden');
+            loginButton.classList.remove('hidden');
+        }
+    });
         function openNewPage() {
+
+           
             // Replace 'url_of_your_page' with the actual URL you want to open
             var newPageUrl = 'http://localhost:3000/list.php';
 
             // Open the new page in a new tab or window
             window.open(newPageUrl, '_blank');
         }
+        function openLoginPage() {
+           
+        // Replace 'url_of_your_page' with the actual URL you want to open
+        var newPageUrl = 'http://localhost:3000/login.php';
+
+        // Open the new page in a new tab or window
+        window.open(newPageUrl, '_blank');
+        }
+
+        function openLogout() {
+            localStorage.clear()
+            window.location.reload()
+        }
+
     </script>
 
 <body>
@@ -76,7 +119,14 @@ else {
                     <a href="#contact">contact</a>
                 </nav>
 
-                <button onclick="openNewPage()" class="link-btn">list of appointment</button>
+                <div class="flex">
+                <button onclick="openNewPage()" id="list-appointment" class="link-btn">list of appointment</button>
+                <button id="login" onclick="openLoginPage()" class="link-btn">Login</button>
+                <button id="logout" onclick="openLogout()" class="link-btn">Logout</button>
+                </div>
+                
+
+
 
                 <!-- <div id="menu-btn" class="fas fa-bas"></div> -->
             </div>
@@ -310,6 +360,9 @@ else {
                 required>
             <span>appointment date :</span>
             <input type="datetime-local" name="date" placeholder="enter your name" class="box" required>
+            <span>description :</span>
+            <textarea name="description" id="number" value="" placeholder="enter description" class="box"
+                required></textarea>
             <input type="submit" value="make appointment" name="submit" class="link-btn">
         </form>
 

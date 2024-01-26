@@ -10,6 +10,21 @@
 
     <link rel="stylesheet" href="css/style.css">
 </head>
+<!-- <script>
+    function openDescription(desc){
+       const container = document.querySelector("#description")
+       const button = document.querySelector("#close")
+       const para = document.querySelector("#para")
+
+       container.classList.remove("hidden")
+       para.innerHTML = desc
+
+       button.addEventListener("click",()=>{
+        container.classList.add("hidden")
+       })
+
+    }
+</script> -->
 
 <?php
 
@@ -39,12 +54,12 @@ if (isset($_POST['update'])) {
     // Get the updated data from the form
     $id = $_POST['editEntryId'];
     $name = mysqli_real_escape_string($conn, $_POST['editName']);
-    $email = mysqli_real_escape_string($conn, $_POST['editEmail']);
+    // $email = mysqli_real_escape_string($conn, $_POST['editEmail']);
     $number = mysqli_real_escape_string($conn, $_POST['editNumber']);
     // Include other fields as needed
 
     // Update the database
-    $updateQuery = "UPDATE create_form SET name='$name', email='$email', number='$number' WHERE id=$id";
+    $updateQuery = "UPDATE create_form SET name='$name', number='$number' WHERE id=$id";
     $updateResult = mysqli_query($conn, $updateQuery);
 
     if ($updateResult) {
@@ -57,7 +72,7 @@ if (isset($_POST['update'])) {
 }
 
 // Fetch the data again after updating
-$sql = "SELECT id, name, email, number, date FROM create_form";
+$sql = "SELECT id, name, email, number, description, date FROM create_form";
 $result = mysqli_query($conn, $sql);
 $connect = mysqli_fetch_all($result, MYSQLI_ASSOC);
 mysqli_free_result($result);
@@ -67,7 +82,13 @@ mysqli_close($conn);
 ?>
 
 <body>
-    <div class="relative w-full h-screen bg-gray-500 py-6">
+    <div class="relative w-full h-screen bg-gray-500 py-6 relative">
+        <div id="description" class="hidden h-[900px] w-[1100px] px-5 flex items-center justify-center py-3 absolute">
+            <div class="flex flex-col items-center bg-black justify-center">
+                <button id='close' class="bg-red-900 py-2 px-5 text-white">close</button>
+                <p id='para' class='text-white'></p>
+            </div>
+        </div>
         <h1 class="text-center font-semibold text-3xl">List of Appointment</h1>
         <table class="w-full mr-32 mt-3 pl-3">
             <thead>
@@ -76,17 +97,19 @@ mysqli_close($conn);
                     <th>Email</th>
                     <th>Number</th>
                     <th>Date</th>
+                    <th>Description</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($connect as $entry): ?>
                     <tr class="border border-black text-white">
-                        <td class="pl-28 py-1 text-xl"><?= htmlspecialchars($entry['name']) ?></td>
-                        <td class="pl-28 text-xl"><?= htmlspecialchars($entry['email']) ?></td>
-                        <td class="pl-28 text-xl"><?= htmlspecialchars($entry['number']) ?></td>
-                        <td class="pl-32 text-xl"><?= htmlspecialchars($entry['date']) ?></td>
-                        <td class="pl-32 text-xl">
+                        <td class="pl-14 py-1 text-xl"><?= htmlspecialchars($entry['name']) ?></td>
+                        <td class="pl-14 text-xl"><?= htmlspecialchars($entry['email']) ?></td>
+                        <td class="pl-14 text-xl"><?= htmlspecialchars($entry['number']) ?></td>
+                        <td class="pl-20 text-xl"><?= htmlspecialchars($entry['date']) ?></td>
+                        <td class="pl-20 text-[.7rem]"><?= htmlspecialchars($entry['description']) ?></td>
+                        <td class="pl-20 text-xl">
                             <!-- Edit button -->
                             <button class="bg-blue-800 text-white px-4 py-1 mr-2" onclick="editEntry(<?= htmlspecialchars($entry['id']) ?>)">Update</button>
                             <!-- Delete button -->
